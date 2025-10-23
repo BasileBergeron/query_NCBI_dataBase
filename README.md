@@ -30,8 +30,8 @@ This Python script allows you to query any NCBI database via the **Entrez webser
 Clone this repository or download the script:
 
 ```bash
-git clone <repository_url>
-cd <repository_folder>
+git clone https://github.com/BasileBergeron/query_NCBI_dataBase
+cd query_NCBI_dataBase
 ```
 Make sure the script is executable:
 ```
