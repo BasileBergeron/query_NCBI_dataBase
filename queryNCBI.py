@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import getopt, sys, logging, os
+import getopt, sys, logging, os, re
 
 from dotenv import load_dotenv #type:ignore
 from Bio import Entrez #type:ignore
@@ -163,6 +163,36 @@ def parser() -> tuple[list, str, int, bool, list[str]]:
             retmax = int(arg)
     return optlist, db, retmax, count_only, write_in_file, args
 
+def is_email_valid(email: str):
+    """Vérifie la validité de l'adresse e-mail, sinon lève une erreur."""
+    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    if not re.match(pattern, email):
+        raise ValueError("Adresse e-mail invalide !")
+    return True
+
+def DB_logger():
+    """
+    Load mail and API key si access NCBI database
+    """
+
+    load_dotenv()
+
+    Entrez.email = os.getenv("NCBI_EMAIL")
+    Entrez.api_key = os.getenv("NCBI_API_KEY")
+
+    if not Entrez.email or not Entrez.api_key:
+        print("NCBI_EMAIL or NCBI_API_KEY not found in .env file.")
+        while True:
+            try:
+                user_email = input("Enter an E-mail address to connect to NCBI database:\n")
+                is_email_valid(user_email)
+                print(user_email)
+                Entrez.email = user_email
+                break
+            except ValueError as e:
+                print(e)
+                print("Please try again, the mail must be valid.\n")
+
 def assertion(db: str, args: str) -> None:
     if db is None:
         logging.error(" No database given")
@@ -217,7 +247,7 @@ def main():
     print(f"count_only : {count_only}")
 
 
-
+    DB_logger()
     # Search in DataBase
     with Entrez.esearch(db=db, term=query, retmax=retmax) as search_handle:
         records = Entrez.read(search_handle)
@@ -258,18 +288,17 @@ def main():
             output = fetch_handle.read()
         
         if write_in_file:
-            filename = f"ncbi.{rettype}.search"
+            filename = f"{query}.ncbi.search.{rettype}"
             
-            # Si on a demandé du texte (xml, fasta, pdb, etc.)
             if isinstance(output, str):
                 with open(filename, "w", encoding="utf-8") as f:
                     f.write(output)
             else:
-                # Si c’est un flux binaire (cas rare : images, BLAST, etc.)
+                # for binary outpu
                 with open(filename, "wb") as f:
                     f.write(output)
 
-            logging.info(f"Résultat écrit dans {filename}")
+            logging.info(f"Results written in {filename}")
         else:
             logging.info(f"{output}")
 
@@ -277,15 +306,6 @@ def main():
 
 
 if __name__ == "__main__":
-
-    load_dotenv()
-
-    Entrez.email = os.getenv("NCBI_EMAIL")
-    Entrez.api_key = os.getenv("NCBI_API_KEY")
-
-    if not Entrez.email or not Entrez.api_key:
-        raise ValueError("NCBI_EMAIL or NCBI_API_KEY not found. Check your .env file.")
-    print("API and MAIL ok")
-
     main()
+
     

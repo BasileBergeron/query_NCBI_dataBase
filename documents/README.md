@@ -1,6 +1,6 @@
 # Query NCBI Databases with Python
 
-This Python script allows you to query any NCBI database via the **Entrez webservice** and fetch results in various formats, including **MEDLINE**, **FASTA**, **XML**, and more. It supports multiple NCBI databases, including `pubmed`, `protein`, `nucleotide`, `gene`, and others.
+This Python script allows you to query any NCBI database via the **Entrez webservice** from BIOpython and fetch results in various formats, including **MEDLINE**, **FASTA**, **XML**, and more. It supports multiple NCBI databases, including `pubmed`, `protein`, `nucleotide`, `gene`, and others.
 
 ---
 
@@ -30,8 +30,8 @@ This Python script allows you to query any NCBI database via the **Entrez webser
 Clone this repository or download the script:
 
 ```bash
-git clone <repository_url>
-cd <repository_folder>
+git clone https://github.com/BasileBergeron/query_NCBI_dataBase
+cd query_NCBI_dataBase
 ```
 Make sure the script is executable:
 ```
@@ -48,14 +48,14 @@ alias ncbi="python3 path/to/the/script/query_pubmed.py"
 
 ## Usage
 
-query_pubmed.py [-h] [-c] [-i] [-r <int>] [-d <database>] "query"
+query_pubmed.py [-h] [-c] [-i] [-r <int>] [-d <database>] "query[FIELD]"
 
 This script sends a query to a specified database via NCBI Entrez and prints results to the screen in the requested format.
 
 Option	Description<br>
 -h	Print this help message<br>
 -c	Count hits only (do not print results)<br>
--i	Display information about databases and their search fields<br>
+-i	Display information about databases search fields<br>
 -d <database>	Select the target NCBI database<br>
 -r <retmax>	Maximum number of results to retrieve (default: 5)
 
